@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import pytest
 from rest_framework.test import APIClient as RESTAPIClient
 from django.test import Client as DjangoClient
 
@@ -46,3 +47,25 @@ class APIClient(RESTAPIClient):
         if getattr(self, '_client_type', None):
             kwargs.update(self._client_type)
         return super(APIClient, self).request(**kwargs)
+
+
+@pytest.fixture
+def client():
+    """APIClient"""
+    return APIClient()
+
+
+@pytest.fixture
+def client_user():
+    """APIClient login with user"""
+    c = APIClient()
+    c.login_user()
+    return APIClient()
+
+
+@pytest.fixture
+def client_superuser():
+    """APIClient login with superuser"""
+    c = APIClient()
+    c.login_superuser()
+    return c

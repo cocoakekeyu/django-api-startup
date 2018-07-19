@@ -1,21 +1,20 @@
 # -*- coding: utf-8 -*-
-import unittest
-
 import pytest
 from model_mommy import mommy
 
 from apps.backend import const
 from apps.backend.models import User
-from tests.fixtures.client import APIClient
+from tests.fixtures.client import client
 
 
 pytestmark = pytest.mark.django_db
 
+c = client
 
-class TestAuthLogin(unittest.TestCase):
 
-    def test_login_with_username(self):
-        c = APIClient()
+class TestAuthLogin:
+
+    def test_login_with_username(self, c):
         User.objects.create_user(
             username='username', phone='15566667777', password='123456')
         data = {
@@ -27,8 +26,7 @@ class TestAuthLogin(unittest.TestCase):
         assert response.status_code == 200
         assert 'access_token' in r
 
-    def test_login_with_phone(self):
-        c = APIClient()
+    def test_login_with_phone(self, c):
         User.objects.create_user(
             username='helloworld', phone='15566667777', password='123456')
         data = {
@@ -40,8 +38,7 @@ class TestAuthLogin(unittest.TestCase):
         assert response.status_code == 200
         assert 'access_token' in r
 
-    def test_login_failure(self):
-        c = APIClient()
+    def test_login_failure(self, c):
         mommy.make_recipe(
             'tests.fixtures.user', username='helloworld',
             phone='15566667777', password='123456')
@@ -52,8 +49,7 @@ class TestAuthLogin(unittest.TestCase):
         response = c.post('/api/v1/auth/login', data)
         assert response.status_code == 400
 
-    def test_login_failure_with_user_at_admin(self):
-        c = APIClient()
+    def test_login_failure_with_user_at_admin(self, c):
         User.objects.create_user(
             username='helloworld', phone='15566667777', password='123456')
         data = {
